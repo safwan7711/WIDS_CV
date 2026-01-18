@@ -28,4 +28,135 @@ For understanding the math behind those filters I referred opencv tutorials, fpc
 * Estimates the $3 \times 3$ Homography matrix using RANSAC with a reprojection threshold of 5.0 pixels.
 * Warps the secondary image using perspective transformation and blends it with the primary image to generate a seamless panorama `output_panorama.jpg`.
 
+# WIDS FINAL PROJECT
+# Comparative Study of Visual Representations for Image Classification
+
+## 1. Project Overview
+
+The goal of this project is to compare **two different visual representation approaches** for image classification:
+
+- **Pipeline A (Classical Computer Vision)**  
+  Hand-crafted features using **ORB descriptors** combined with a traditional **k-Nearest Neighbors (kNN)** classifier.
+
+- **Pipeline B (Deep Learning)**  
+  Automatically learned features using a **Convolutional Neural Network (CNN)** based on **MobileNetV2**.
+
+The comparison focuses not only on classification accuracy, but also on **error patterns and limitations** of each approach, as required in the project description.
+
+---
+
+## 2. Dataset
+
+- **Dataset:** CIFAR-10  
+- **Number of classes:** 10  
+- **Train / Validation split:**
+  - Training set: 45,000 images
+  - Validation set: 5,000 images
+
+The **same dataset split and preprocessing** are used for both pipelines to ensure a fair comparison.
+---
+
+## 3. Pipeline A: ORB + Bag of Visual Words + kNN
+
+### 3.1 Visual Representation
+
+- **ORB (Oriented FAST and Rotated BRIEF)** is used to extract local keypoints and binary descriptors.
+- Since each image produces a variable number of descriptors, a **Bag of Visual Words (BoVW)** approach is applied:
+  - ORB descriptors from training images are clustered using **K-Means**.
+  - Each image is represented as a **fixed-length histogram** of visual word occurrences.
+
+### 3.2 Classifier
+
+- A **k-Nearest Neighbors (kNN)** classifier is trained on the BoVW histograms.
+- Distance metric: Euclidean distance.
+
+### 3.4 Performance
+
+- Validation accuracy is approximately **14%**, slightly above random guessing (10%).
+- A **confusion matrix** is used to analyze class-wise misclassifications.
+
+### 3.5 Observations
+
+- ORB relies on corner and edge features.
+- CIFAR-10 images are low-resolution and lack strong corner structures.
+- BoVW discards spatial information, limiting discriminative power.
+
+---
+
+## 4. Pipeline B: CNN (MobileNetV2)
+
+### 4.1 Visual Representation
+
+- A **Convolutional Neural Network** learns hierarchical visual features directly from pixel data.
+- **MobileNetV2** pretrained on ImageNet is used as the backbone.
+- The final classification layer is replaced to match the CIFAR-10 classes.
+
+### 4.2 Training
+
+- Loss function: Cross-entropy loss
+- Optimizer: Adam
+- Training is performed for a small number of epochs due to computational constraints.
+- Validation accuracy is monitored to evaluate performance.
+
+### 4.3 Performance
+
+- The CNN achieves **significantly higher accuracy** than the classical pipeline. **90%**
+- The confusion matrix shows fewer misclassifications and stronger diagonal dominance.
+
+### 4.4 Observations
+
+- CNNs learn both low-level (edges, textures) and high-level (object structure) features.
+- Spatial relationships are preserved, unlike in BoVW.
+- CNNs are computationally more expensive but much more expressive as it took more time.
+
+---
+
+## 5. Comparative Analysis
+
+| Aspect | Pipeline A (ORB + kNN) | Pipeline B (CNN) |
+|------|------------------------|------------------|
+| Feature type | Hand-crafted | Learned automatically |
+| Spatial information | Lost (BoVW) | Preserved |
+| Accuracy | Low (~14%) | High |
+| Interpretability | High | Lower |
+| Computational cost | Low | High |
+
+### Key Insight
+
+The experiment demonstrates that **classical hand-crafted features struggle** on complex, low-resolution image datasets like CIFAR-10, whereas **CNNs perform significantly better** by learning task-specific representations directly from data.
+
+---
+
+## 6. Error Analysis
+
+- Confusion matrices reveal that Pipeline A frequently confuses visually similar classes.
+- Pipeline B shows fewer confusions and better class separation.
+- This highlights the limitations of classical representations compared to deep learning approaches.
+- you can see that the values in the diagonals are big unlike in pipeline A.
+
+---
+
+## 7. Conclusion
+
+This project shows that:
+- Classical visual representations such as ORB + BoVW are simple and computationally efficient but limited in performance.
+- CNN-based representations are significantly more powerful for image classification.
+- Validation-based hyperparameter tuning and confusion matrix analysis provide meaningful insights beyond overall accuracy.
+
+---
+
+
+## 8. Libraries Used
+
+- NumPy  
+- OpenCV  
+- scikit-learn  
+- PyTorch  
+- Torchvision  
+- Matplotlib  
+
+
+
+
+
 
